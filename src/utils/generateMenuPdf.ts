@@ -162,7 +162,7 @@ export const generateMenuPdf = async () => {
   const categories = Object.values(menuData);
 
   const addCategory = (category: { title: string; items: { name: string; price: number }[] }) => {
-    const categoryHeight = 15 + category.items.length * 7;
+    const categoryHeight = 18 + category.items.length * 8;
 
     // Check if we need to switch columns or pages
     if (y + categoryHeight > pageHeight - margin) {
@@ -191,20 +191,20 @@ export const generateMenuPdf = async () => {
 
     // Items
     category.items.forEach((item, index) => {
-      const itemY = y + index * 7;
+      const itemY = y + index * 8;
       
       // Alternating background
       if (index % 2 === 0) {
         doc.setFillColor(255, 255, 255);
-        doc.rect(columnX, itemY - 4, columnWidth, 7, "F");
+        doc.rect(columnX, itemY - 4, columnWidth, 8, "F");
       }
 
       doc.setTextColor(...primaryColor);
-      doc.setFontSize(9);
+      doc.setFontSize(10);
       doc.setFont("helvetica", "normal");
       
       // Item name (truncate if too long)
-      const maxNameWidth = columnWidth - 30;
+      const maxNameWidth = columnWidth - 35;
       let itemName = item.name;
       while (doc.getTextWidth(itemName) > maxNameWidth && itemName.length > 0) {
         itemName = itemName.slice(0, -1);
@@ -212,15 +212,15 @@ export const generateMenuPdf = async () => {
       if (itemName !== item.name) {
         itemName += "...";
       }
-      doc.text(itemName, columnX + 3, itemY);
+      doc.text(itemName, columnX + 4, itemY);
 
-      // Price
+      // Price - using Rs. instead of rupee symbol for better compatibility
       doc.setTextColor(...goldColor);
       doc.setFont("helvetica", "bold");
-      doc.text(`₹${item.price}`, columnX + columnWidth - 3, itemY, { align: "right" });
+      doc.text(`Rs. ${item.price}`, columnX + columnWidth - 4, itemY, { align: "right" });
     });
 
-    y += category.items.length * 7 + 8;
+    y += category.items.length * 8 + 10;
   };
 
   categories.forEach((category) => {
