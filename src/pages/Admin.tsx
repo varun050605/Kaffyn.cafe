@@ -175,12 +175,12 @@ const Admin = () => {
           <div className="container-wide px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
-                <span className="text-sm tracking-[0.2em] uppercase text-gold font-medium">
+                <h1 className="text-sm tracking-[0.2em] uppercase text-gold font-medium">
                   Admin Dashboard
-                </span>
-                <h1 className="font-serif text-3xl md:text-4xl text-primary mt-2">
-                  Reservations
                 </h1>
+                <p className="font-serif text-3xl md:text-4xl text-primary mt-2">
+                  Reservations
+                </p>
               </div>
               <div className="flex gap-3">
                 <Button variant="outline" size="sm" onClick={fetchReservations}>
