@@ -3,27 +3,27 @@ import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import signatureDrink from "@/assets/signature-drink.jpg";
-import pastry from "@/assets/pastry.jpg";
-import coffeeBeans from "@/assets/coffee-beans.jpg";
-import heroCoffee from "@/assets/hero-coffee.jpg";
+import craftLatte from "@/assets/craft-latte.jpg";
+import craftCoffee from "@/assets/craft-coffee.jpg";
+import craftColdbrew from "@/assets/craft-coldbrew.jpg";
+import craftSpecials from "@/assets/craft-specials.jpg";
 
 const galleryImages = [
   {
-    image: signatureDrink,
+    image: craftLatte,
     alt: "Signature latte with latte art",
   },
   {
-    image: coffeeBeans,
-    alt: "Premium coffee beans",
-  },
-  {
-    image: heroCoffee,
+    image: craftCoffee,
     alt: "Freshly brewed coffee",
   },
   {
-    image: pastry,
-    alt: "Artisan pastries",
+    image: craftColdbrew,
+    alt: "Refreshing cold brew",
+  },
+  {
+    image: craftSpecials,
+    alt: "Weekly specials",
   },
 ];
 
