@@ -4,6 +4,17 @@ import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { generateMenuPdf } from "@/utils/generateMenuPdf";
 import signatureDrink from "@/assets/signature-drink.jpg";
+import craftLatte from "@/assets/craft-latte.jpg";
+import craftCoffee from "@/assets/craft-coffee.jpg";
+import craftColdbrew from "@/assets/craft-coldbrew.jpg";
+import craftSpecials from "@/assets/craft-specials.jpg";
+
+const beverageImages = [
+  { src: craftLatte, alt: "Latte art" },
+  { src: craftCoffee, alt: "Fresh brewed coffee" },
+  { src: craftColdbrew, alt: "Cold brew coffee" },
+  { src: craftSpecials, alt: "Specialty drinks" },
+];
 
 const Menu = () => {
   return (
@@ -14,7 +25,7 @@ const Menu = () => {
         transition={{ duration: 0.5 }}
       >
         {/* Hero */}
-        <section className="pt-32 pb-24 bg-cream min-h-[70vh] flex items-center">
+        <section className="pt-32 pb-16 bg-cream">
           <div className="container-wide px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <motion.div
@@ -60,6 +71,30 @@ const Menu = () => {
                 <div className="absolute -top-4 -right-4 w-24 h-24 bg-gold/20 rounded-full blur-2xl" />
                 <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-gold/10 rounded-full blur-3xl" />
               </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* Beverage Images Grid */}
+        <section className="py-16 bg-cream">
+          <div className="container-wide px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {beverageImages.map((image, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 * index }}
+                  className="relative rounded-xl overflow-hidden aspect-square shadow-soft group"
+                >
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </motion.div>
+              ))}
             </div>
           </div>
         </section>
