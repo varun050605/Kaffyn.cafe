@@ -112,24 +112,29 @@ export const generateMenuPdf = async () => {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 20;
-  const columnWidth = (pageWidth - margin * 3) / 2;
+  const margin = 15;
+  const contentWidth = pageWidth - margin * 2;
   let y = margin;
-  let currentColumn = 0;
-  let columnX = margin;
 
-  // Colors
-  const primaryColor: [number, number, number] = [26, 20, 16];
-  const goldColor: [number, number, number] = [183, 141, 81];
-  const lightBg: [number, number, number] = [250, 248, 245];
+  // Elegant color palette
+  const darkBrown: [number, number, number] = [45, 35, 28];
+  const warmGold: [number, number, number] = [180, 145, 90];
+  const cream: [number, number, number] = [255, 252, 247];
+  const softBrown: [number, number, number] = [120, 100, 80];
 
-  // Background
-  doc.setFillColor(...lightBg);
+  // Page background with subtle texture effect
+  doc.setFillColor(...cream);
   doc.rect(0, 0, pageWidth, pageHeight, "F");
 
-  // Header with logo
-  doc.setFillColor(...primaryColor);
-  doc.rect(0, 0, pageWidth, 50, "F");
+  // Decorative border
+  doc.setDrawColor(...warmGold);
+  doc.setLineWidth(0.5);
+  doc.rect(8, 8, pageWidth - 16, pageHeight - 16);
+  doc.setLineWidth(0.2);
+  doc.rect(10, 10, pageWidth - 20, pageHeight - 20);
+
+  // Header area
+  y = 20;
 
   // Load and add logo
   try {
@@ -141,70 +146,86 @@ export const generateMenuPdf = async () => {
       img.src = kaffynLogo;
     });
     
-    // Add white background circle for logo
-    doc.setFillColor(255, 255, 255);
-    doc.circle(pageWidth / 2, 25, 18, "F");
-    
-    // Add logo centered in header
-    const logoWidth = 32;
-    const logoHeight = 32;
-    doc.addImage(img, "PNG", (pageWidth - logoWidth) / 2, 9, logoWidth, logoHeight);
-  } catch (error) {
-    // Fallback to text if logo fails
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(28);
-    doc.setFont("helvetica", "bold");
-    doc.text("KAFFYN", pageWidth / 2, 30, { align: "center" });
+    const logoSize = 28;
+    doc.addImage(img, "PNG", (pageWidth - logoSize) / 2, y, logoSize, logoSize);
+    y += logoSize + 5;
+  } catch {
+    doc.setTextColor(...darkBrown);
+    doc.setFontSize(24);
+    doc.setFont("times", "bold");
+    doc.text("KAFFYN", pageWidth / 2, y + 15, { align: "center" });
+    y += 25;
   }
 
-  y = 60;
+  // Decorative line under logo
+  doc.setDrawColor(...warmGold);
+  doc.setLineWidth(0.3);
+  const lineWidth = 40;
+  doc.line((pageWidth - lineWidth) / 2, y, (pageWidth + lineWidth) / 2, y);
+  
+  // Menu title
+  y += 8;
+  doc.setTextColor(...darkBrown);
+  doc.setFontSize(14);
+  doc.setFont("times", "italic");
+  doc.text("Menu", pageWidth / 2, y, { align: "center" });
+  
+  y += 12;
 
   const categories = Object.values(menuData);
+  const columnWidth = (contentWidth - 10) / 2;
+  let currentColumn = 0;
+  let columnX = margin;
+  const startY = y;
 
   const addCategory = (category: { title: string; items: { name: string; price: number }[] }) => {
-    const categoryHeight = 18 + category.items.length * 8;
+    const itemHeight = 6;
+    const categoryHeight = 12 + category.items.length * itemHeight + 8;
 
     // Check if we need to switch columns or pages
-    if (y + categoryHeight > pageHeight - margin) {
+    if (y + categoryHeight > pageHeight - 25) {
       if (currentColumn === 0) {
         currentColumn = 1;
-        columnX = margin * 2 + columnWidth;
-        y = 60;
+        columnX = margin + columnWidth + 10;
+        y = startY;
       } else {
         doc.addPage();
-        doc.setFillColor(...lightBg);
+        doc.setFillColor(...cream);
         doc.rect(0, 0, pageWidth, pageHeight, "F");
+        // Border on new page
+        doc.setDrawColor(...warmGold);
+        doc.setLineWidth(0.5);
+        doc.rect(8, 8, pageWidth - 16, pageHeight - 16);
+        doc.setLineWidth(0.2);
+        doc.rect(10, 10, pageWidth - 20, pageHeight - 20);
         currentColumn = 0;
         columnX = margin;
-        y = margin;
+        y = 20;
       }
     }
 
-    // Category title
-    doc.setFillColor(...goldColor);
-    doc.roundedRect(columnX, y, columnWidth, 10, 2, 2, "F");
-    doc.setTextColor(255, 255, 255);
+    // Category title with elegant underline
+    doc.setTextColor(...darkBrown);
     doc.setFontSize(11);
-    doc.setFont("helvetica", "bold");
-    doc.text(category.title.toUpperCase(), columnX + 5, y + 7);
-    y += 14;
+    doc.setFont("times", "bold");
+    doc.text(category.title, columnX, y);
+    
+    // Underline
+    const titleWidth = doc.getTextWidth(category.title);
+    doc.setDrawColor(...warmGold);
+    doc.setLineWidth(0.4);
+    doc.line(columnX, y + 1.5, columnX + titleWidth, y + 1.5);
+    
+    y += 8;
 
     // Items
-    category.items.forEach((item, index) => {
-      const itemY = y + index * 8;
-      
-      // Alternating background
-      if (index % 2 === 0) {
-        doc.setFillColor(255, 255, 255);
-        doc.rect(columnX, itemY - 4, columnWidth, 8, "F");
-      }
-
+    category.items.forEach((item) => {
       // Item name
-      doc.setTextColor(...primaryColor);
-      doc.setFontSize(10);
+      doc.setTextColor(...softBrown);
+      doc.setFontSize(9);
       doc.setFont("helvetica", "normal");
       
-      const maxNameWidth = columnWidth - 25;
+      const maxNameWidth = columnWidth - 22;
       let itemName = item.name;
       while (doc.getTextWidth(itemName) > maxNameWidth && itemName.length > 0) {
         itemName = itemName.slice(0, -1);
@@ -212,49 +233,34 @@ export const generateMenuPdf = async () => {
       if (itemName !== item.name) {
         itemName += "...";
       }
-      doc.text(itemName, columnX + 4, itemY);
-
-      // Dotted line between name and price
-      const nameWidth = doc.getTextWidth(itemName);
-      const priceText = `${item.price}`;
-      doc.setFontSize(10);
-      doc.setFont("helvetica", "bold");
-      const priceWidth = doc.getTextWidth(priceText);
-      
-      // Draw dots
-      doc.setTextColor(180, 180, 180);
-      doc.setFontSize(8);
-      const dotsStart = columnX + 6 + nameWidth;
-      const dotsEnd = columnX + columnWidth - priceWidth - 8;
-      let dotX = dotsStart;
-      while (dotX < dotsEnd) {
-        doc.text(".", dotX, itemY);
-        dotX += 3;
-      }
+      doc.text(itemName, columnX, y);
 
       // Price
-      doc.setTextColor(...goldColor);
-      doc.setFontSize(11);
+      doc.setTextColor(...darkBrown);
+      doc.setFontSize(9);
       doc.setFont("helvetica", "bold");
-      doc.text(priceText, columnX + columnWidth - 4, itemY, { align: "right" });
+      doc.text(`${item.price}`, columnX + columnWidth - 2, y, { align: "right" });
+      
+      y += itemHeight;
     });
 
-    y += category.items.length * 8 + 10;
+    y += 6;
   };
 
   categories.forEach((category) => {
     addCategory(category);
   });
 
-  // Footer on last page
-  const lastPageHeight = doc.internal.pageSize.getHeight();
-  doc.setFillColor(...primaryColor);
-  doc.rect(0, lastPageHeight - 20, pageWidth, 20, "F");
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(8);
-  doc.setFont("helvetica", "normal");
-  doc.text("Prices are subject to change • All prices inclusive of taxes", pageWidth / 2, lastPageHeight - 10, { align: "center" });
+  // Footer
+  doc.setDrawColor(...warmGold);
+  doc.setLineWidth(0.3);
+  doc.line(margin, pageHeight - 18, pageWidth - margin, pageHeight - 18);
+  
+  doc.setTextColor(...softBrown);
+  doc.setFontSize(7);
+  doc.setFont("helvetica", "italic");
+  doc.text("Prices are subject to change  •  All prices inclusive of taxes", pageWidth / 2, pageHeight - 12, { align: "center" });
 
   // Save
-  doc.save("Cafe_Menu.pdf");
+  doc.save("Kaffyn_Menu.pdf");
 };
