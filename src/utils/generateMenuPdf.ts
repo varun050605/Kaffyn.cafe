@@ -1,12 +1,8 @@
-import { motion } from "framer-motion";
-import { Layout } from "@/components/layout/Layout";
-import { Coffee, IceCream, Leaf, Flame, GlassWater, Cake, Download } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { generateMenuPdf } from "@/utils/generateMenuPdf";
+import jsPDF from "jspdf";
+
 const menuData = {
   hotCoffee: {
     title: "Hot Coffee",
-    icon: Coffee,
     items: [
       { name: "Espresso", price: 160 },
       { name: "Macchiato", price: 170 },
@@ -28,7 +24,6 @@ const menuData = {
   },
   icedCoffee: {
     title: "Iced Coffee",
-    icon: IceCream,
     items: [
       { name: "Iced Latte Original", price: 190 },
       { name: "Iced Vanilla Latte", price: 210 },
@@ -55,7 +50,6 @@ const menuData = {
   },
   manualBrew: {
     title: "Manual Brew",
-    icon: Flame,
     items: [
       { name: "Hot Pour Over", price: 200 },
       { name: "Cold Brew", price: 210 },
@@ -72,7 +66,6 @@ const menuData = {
   },
   dessertCoffee: {
     title: "Dessert Coffee",
-    icon: Cake,
     items: [
       { name: "Affogato", price: 240 },
       { name: "Trifle Affogato", price: 330 },
@@ -82,7 +75,6 @@ const menuData = {
   },
   notCoffee: {
     title: "Not Coffee",
-    icon: Leaf,
     items: [
       { name: "Hot Chocolate Original", price: 200 },
       { name: "Cinnamon Hot Chocolate", price: 220 },
@@ -94,7 +86,6 @@ const menuData = {
   },
   coolers: {
     title: "Coolers & Refreshers",
-    icon: GlassWater,
     items: [
       { name: "Pink Lemonade", price: 180 },
       { name: "Mojito", price: 190 },
@@ -109,7 +100,6 @@ const menuData = {
   },
   desserts: {
     title: "Desserts",
-    icon: Cake,
     items: [
       { name: "Chocolate Cream", price: 260 },
       { name: "Biscoff Ice-cream Sandwich", price: 200 },
@@ -117,94 +107,117 @@ const menuData = {
   },
 };
 
-const MenuCategory = ({
-  category,
-  index,
-}: {
-  category: { title: string; icon: React.ComponentType<{ className?: string }>; items: { name: string; price: number }[] };
-  index: number;
-}) => {
-  const Icon = category.icon;
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="bg-white rounded-2xl shadow-soft p-6 md:p-8"
-    >
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center">
-          <Icon className="w-5 h-5 text-gold" />
-        </div>
-        <h2 className="font-serif text-2xl text-primary">{category.title}</h2>
-      </div>
-      <div className="space-y-3">
-        {category.items.map((item) => (
-          <div
-            key={item.name}
-            className="flex justify-between items-center py-2 border-b border-cream last:border-b-0"
-          >
-            <span className="text-foreground">{item.name}</span>
-            <span className="text-gold font-medium">₹{item.price}</span>
-          </div>
-        ))}
-      </div>
-    </motion.div>
-  );
-};
+export const generateMenuPdf = () => {
+  const doc = new jsPDF();
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 20;
+  const columnWidth = (pageWidth - margin * 3) / 2;
+  let y = margin;
+  let currentColumn = 0;
+  let columnX = margin;
 
-const Menu = () => {
+  // Colors
+  const primaryColor: [number, number, number] = [26, 20, 16];
+  const goldColor: [number, number, number] = [183, 141, 81];
+  const lightBg: [number, number, number] = [250, 248, 245];
+
+  // Background
+  doc.setFillColor(...lightBg);
+  doc.rect(0, 0, pageWidth, pageHeight, "F");
+
+  // Header
+  doc.setFillColor(...primaryColor);
+  doc.rect(0, 0, pageWidth, 45, "F");
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(28);
+  doc.setFont("helvetica", "bold");
+  doc.text("CAFÉ MENU", pageWidth / 2, 25, { align: "center" });
+
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Handcrafted with love", pageWidth / 2, 35, { align: "center" });
+
+  y = 55;
+
   const categories = Object.values(menuData);
 
-  return (
-    <Layout>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        {/* Hero */}
-        <section className="pt-32 pb-16 bg-cream">
-          <div className="container-wide px-4 sm:px-6 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-center max-w-3xl mx-auto"
-            >
-              <span className="text-sm tracking-[0.2em] uppercase text-gold font-medium">
-                Curated with Care
-              </span>
-              <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl text-primary mt-4 mb-6">
-                Our Menu
-              </h1>
-              <p className="text-lg text-muted-foreground mb-8">
-                Handcrafted beverages and artisan treats made with love
-              </p>
-              <Button
-                onClick={generateMenuPdf}
-                className="bg-gold hover:bg-gold/90 text-primary font-medium"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Download Menu PDF
-              </Button>
-            </motion.div>
-          </div>
-        </section>
+  const addCategory = (category: { title: string; items: { name: string; price: number }[] }) => {
+    const categoryHeight = 15 + category.items.length * 7;
 
-        {/* Menu Grid */}
-        <section className="section-padding bg-cream/50">
-          <div className="container-wide">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {categories.map((category, index) => (
-                <MenuCategory key={category.title} category={category} index={index} />
-              ))}
-            </div>
-          </div>
-        </section>
-      </motion.div>
-    </Layout>
-  );
+    // Check if we need to switch columns or pages
+    if (y + categoryHeight > pageHeight - margin) {
+      if (currentColumn === 0) {
+        currentColumn = 1;
+        columnX = margin * 2 + columnWidth;
+        y = 55;
+      } else {
+        doc.addPage();
+        doc.setFillColor(...lightBg);
+        doc.rect(0, 0, pageWidth, pageHeight, "F");
+        currentColumn = 0;
+        columnX = margin;
+        y = margin;
+      }
+    }
+
+    // Category title
+    doc.setFillColor(...goldColor);
+    doc.roundedRect(columnX, y, columnWidth, 10, 2, 2, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "bold");
+    doc.text(category.title.toUpperCase(), columnX + 5, y + 7);
+    y += 14;
+
+    // Items
+    category.items.forEach((item, index) => {
+      const itemY = y + index * 7;
+      
+      // Alternating background
+      if (index % 2 === 0) {
+        doc.setFillColor(255, 255, 255);
+        doc.rect(columnX, itemY - 4, columnWidth, 7, "F");
+      }
+
+      doc.setTextColor(...primaryColor);
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "normal");
+      
+      // Item name (truncate if too long)
+      const maxNameWidth = columnWidth - 30;
+      let itemName = item.name;
+      while (doc.getTextWidth(itemName) > maxNameWidth && itemName.length > 0) {
+        itemName = itemName.slice(0, -1);
+      }
+      if (itemName !== item.name) {
+        itemName += "...";
+      }
+      doc.text(itemName, columnX + 3, itemY);
+
+      // Price
+      doc.setTextColor(...goldColor);
+      doc.setFont("helvetica", "bold");
+      doc.text(`₹${item.price}`, columnX + columnWidth - 3, itemY, { align: "right" });
+    });
+
+    y += category.items.length * 7 + 8;
+  };
+
+  categories.forEach((category) => {
+    addCategory(category);
+  });
+
+  // Footer on last page
+  const lastPageHeight = doc.internal.pageSize.getHeight();
+  doc.setFillColor(...primaryColor);
+  doc.rect(0, lastPageHeight - 20, pageWidth, 20, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(8);
+  doc.setFont("helvetica", "normal");
+  doc.text("Prices are subject to change • All prices inclusive of taxes", pageWidth / 2, lastPageHeight - 10, { align: "center" });
+
+  // Save
+  doc.save("Cafe_Menu.pdf");
 };
-
-export default Menu;
