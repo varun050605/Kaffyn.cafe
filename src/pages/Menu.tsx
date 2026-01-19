@@ -1,32 +1,159 @@
 import { motion } from "framer-motion";
 import { Layout } from "@/components/layout/Layout";
-import { ExternalLink } from "lucide-react";
-import signatureDrink from "@/assets/signature-drink.jpg";
-import pastry from "@/assets/pastry.jpg";
+import { Coffee, IceCream, Leaf, Flame, GlassWater, Cake } from "lucide-react";
 
-const menuCategories = [
-  {
-    title: "Coffee & Beverages",
-    description: "Handcrafted coffees, signature lattes, and refreshing drinks",
-    image: signatureDrink,
-    pdfLink: "/menus/Kaffyn_Menu.pdf",
-    available: true,
+const menuData = {
+  hotCoffee: {
+    title: "Hot Coffee",
+    icon: Coffee,
+    items: [
+      { name: "Espresso", price: 160 },
+      { name: "Macchiato", price: 170 },
+      { name: "Caramel Macchiato", price: 200 },
+      { name: "Latte", price: 200 },
+      { name: "Vanilla Latte", price: 220 },
+      { name: "Hazelnut Latte", price: 220 },
+      { name: "Biscoff Latte", price: 240 },
+      { name: "24k Gold Latte", price: 280 },
+      { name: "Cortado", price: 200 },
+      { name: "Flat White", price: 200 },
+      { name: "Cappuccino", price: 200 },
+      { name: "Mocha Cappuccino", price: 210 },
+      { name: "White Mocha", price: 210 },
+      { name: "Crème Brûlée Cappuccino", price: 220 },
+      { name: "Irish Coffee", price: 200 },
+      { name: "Americano", price: 190 },
+    ],
   },
-  {
-    title: "Food Menu",
-    description: "Fresh breakfast, pastries, and artisan bites",
-    image: pastry,
-    pdfLink: null,
-    available: false,
+  icedCoffee: {
+    title: "Iced Coffee",
+    icon: IceCream,
+    items: [
+      { name: "Iced Latte Original", price: 190 },
+      { name: "Iced Vanilla Latte", price: 210 },
+      { name: "Iced Irish Cream Latte", price: 220 },
+      { name: "Iced Caramel Latte", price: 220 },
+      { name: "Iced Hazelnut Latte", price: 220 },
+      { name: "Iced Mocha Latte", price: 230 },
+      { name: "Iced Biscoff Latte", price: 270 },
+      { name: "Iced Nutella Latte", price: 270 },
+      { name: "Oat Milkshaken Espresso", price: 260 },
+      { name: "Frappé Original", price: 210 },
+      { name: "Mocha Frappé", price: 250 },
+      { name: "Irish Frappé", price: 280 },
+      { name: "KitKat Frappé", price: 270 },
+      { name: "Hazelnut Frappé", price: 290 },
+      { name: "Caramel Frappé", price: 290 },
+      { name: "Oreo Chip Frappé", price: 290 },
+      { name: "Choco Frappé", price: 310 },
+      { name: "Biscoff Frappé", price: 320 },
+      { name: "Nutella Frappé", price: 320 },
+      { name: "Ferrero Rocher Frappé", price: 380 },
+      { name: "Brownie Mocha Frappé", price: 380 },
+    ],
   },
-];
+  manualBrew: {
+    title: "Manual Brew",
+    icon: Flame,
+    items: [
+      { name: "Hot Pour Over", price: 200 },
+      { name: "Cold Brew", price: 210 },
+      { name: "Iced Pour Over Vanilla", price: 220 },
+      { name: "Cold Brew Sweet Cream", price: 230 },
+      { name: "Sparkling Cold Brew", price: 230 },
+      { name: "Black Mamba", price: 240 },
+      { name: "Iced Americano", price: 210 },
+      { name: "Espresso Tonic", price: 270 },
+      { name: "Cold Brew Tonic", price: 270 },
+      { name: "Cranberry Espresso Tonic", price: 280 },
+      { name: "Orange Brew Driver", price: 280 },
+    ],
+  },
+  dessertCoffee: {
+    title: "Dessert Coffee",
+    icon: Cake,
+    items: [
+      { name: "Affogato", price: 240 },
+      { name: "Trifle Affogato", price: 330 },
+      { name: "Vietnamese Coffee", price: 210 },
+      { name: "Bombon", price: 210 },
+    ],
+  },
+  notCoffee: {
+    title: "Not Coffee",
+    icon: Leaf,
+    items: [
+      { name: "Hot Chocolate Original", price: 200 },
+      { name: "Cinnamon Hot Chocolate", price: 220 },
+      { name: "Hazelnut Hot Chocolate", price: 240 },
+      { name: "Belgian Hot Chocolate", price: 270 },
+      { name: "Tea (Various Options)", price: 130 },
+      { name: "Blooming Tea", price: 240 },
+    ],
+  },
+  coolers: {
+    title: "Coolers & Refreshers",
+    icon: GlassWater,
+    items: [
+      { name: "Pink Lemonade", price: 180 },
+      { name: "Mojito", price: 190 },
+      { name: "Blueberry Cooler", price: 230 },
+      { name: "Iced Tea", price: 230 },
+      { name: "Guava Colada", price: 230 },
+      { name: "Sangria", price: 250 },
+      { name: "Passion Breeze", price: 280 },
+      { name: "Bliss On Peach", price: 280 },
+      { name: "Lychee Lemon Candy", price: 300 },
+    ],
+  },
+  desserts: {
+    title: "Desserts",
+    icon: Cake,
+    items: [
+      { name: "Chocolate Cream", price: 260 },
+      { name: "Biscoff Ice-cream Sandwich", price: 200 },
+    ],
+  },
+};
+
+const MenuCategory = ({
+  category,
+  index,
+}: {
+  category: { title: string; icon: React.ComponentType<{ className?: string }>; items: { name: string; price: number }[] };
+  index: number;
+}) => {
+  const Icon = category.icon;
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      className="bg-white rounded-2xl shadow-soft p-6 md:p-8"
+    >
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center">
+          <Icon className="w-5 h-5 text-gold" />
+        </div>
+        <h2 className="font-serif text-2xl text-primary">{category.title}</h2>
+      </div>
+      <div className="space-y-3">
+        {category.items.map((item) => (
+          <div
+            key={item.name}
+            className="flex justify-between items-center py-2 border-b border-cream last:border-b-0"
+          >
+            <span className="text-foreground">{item.name}</span>
+            <span className="text-gold font-medium">₹{item.price}</span>
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+};
 
 const Menu = () => {
-  const handleMenuClick = (pdfLink: string | null, available: boolean) => {
-    if (available && pdfLink) {
-      window.open(pdfLink, "_blank");
-    }
-  };
+  const categories = Object.values(menuData);
 
   return (
     <Layout>
@@ -51,69 +178,18 @@ const Menu = () => {
                 Our Menu
               </h1>
               <p className="text-lg text-muted-foreground">
-                Click on a menu category to view the full menu in PDF format.
+                Handcrafted beverages and artisan treats made with love
               </p>
             </motion.div>
           </div>
         </section>
 
-        {/* Menu Categories Grid */}
-        <section className="section-padding">
+        {/* Menu Grid */}
+        <section className="section-padding bg-cream/50">
           <div className="container-wide">
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              {menuCategories.map((category, index) => (
-                <motion.div
-                  key={category.title}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  onClick={() => handleMenuClick(category.pdfLink, category.available)}
-                  className={`group relative overflow-hidden rounded-2xl shadow-soft hover:shadow-medium transition-all duration-500 ${
-                    category.available 
-                      ? "cursor-pointer" 
-                      : "cursor-not-allowed opacity-75"
-                  }`}
-                >
-                  {/* Image */}
-                  <div className="relative h-72 md:h-80 overflow-hidden">
-                    <motion.img
-                      src={category.image}
-                      alt={category.title}
-                      className="w-full h-full object-cover"
-                      whileHover={category.available ? { scale: 1.08 } : {}}
-                      transition={{ duration: 0.5 }}
-                    />
-                    {/* Overlay */}
-                    <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent transition-opacity duration-300 ${
-                      category.available ? "group-hover:from-black/90" : ""
-                    }`} />
-                    
-                    {/* Content */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
-                      <h2 className="font-serif text-2xl md:text-3xl text-white mb-3">
-                        {category.title}
-                      </h2>
-                      <p className="text-white/80 text-sm md:text-base max-w-xs">
-                        {category.description}
-                      </p>
-                      
-                      {category.available ? (
-                        <motion.div
-                          className="mt-6 flex items-center gap-2 px-6 py-3 bg-gold text-primary rounded-full font-medium text-sm"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <span>View Menu</span>
-                          <ExternalLink className="w-4 h-4" />
-                        </motion.div>
-                      ) : (
-                        <div className="mt-6 px-6 py-3 bg-white/20 text-white/80 rounded-full font-medium text-sm">
-                          Coming Soon
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {categories.map((category, index) => (
+                <MenuCategory key={category.title} category={category} index={index} />
               ))}
             </div>
           </div>
