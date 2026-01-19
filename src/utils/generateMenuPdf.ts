@@ -199,12 +199,12 @@ export const generateMenuPdf = async () => {
         doc.rect(columnX, itemY - 4, columnWidth, 8, "F");
       }
 
+      // Item name
       doc.setTextColor(...primaryColor);
       doc.setFontSize(10);
       doc.setFont("helvetica", "normal");
       
-      // Item name (truncate if too long)
-      const maxNameWidth = columnWidth - 35;
+      const maxNameWidth = columnWidth - 25;
       let itemName = item.name;
       while (doc.getTextWidth(itemName) > maxNameWidth && itemName.length > 0) {
         itemName = itemName.slice(0, -1);
@@ -214,10 +214,29 @@ export const generateMenuPdf = async () => {
       }
       doc.text(itemName, columnX + 4, itemY);
 
-      // Price - using Rs. instead of rupee symbol for better compatibility
-      doc.setTextColor(...goldColor);
+      // Dotted line between name and price
+      const nameWidth = doc.getTextWidth(itemName);
+      const priceText = `${item.price}`;
+      doc.setFontSize(10);
       doc.setFont("helvetica", "bold");
-      doc.text(`Rs. ${item.price}`, columnX + columnWidth - 4, itemY, { align: "right" });
+      const priceWidth = doc.getTextWidth(priceText);
+      
+      // Draw dots
+      doc.setTextColor(180, 180, 180);
+      doc.setFontSize(8);
+      const dotsStart = columnX + 6 + nameWidth;
+      const dotsEnd = columnX + columnWidth - priceWidth - 8;
+      let dotX = dotsStart;
+      while (dotX < dotsEnd) {
+        doc.text(".", dotX, itemY);
+        dotX += 3;
+      }
+
+      // Price
+      doc.setTextColor(...goldColor);
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "bold");
+      doc.text(priceText, columnX + columnWidth - 4, itemY, { align: "right" });
     });
 
     y += category.items.length * 8 + 10;
