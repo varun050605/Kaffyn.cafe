@@ -58,7 +58,7 @@ const AdminLogin = () => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="min-h-screen flex items-center justify-center bg-cream pt-20 pb-20"
+        className="min-h-screen flex items-center justify-center bg-cream pt-32 pb-20"
       >
         <motion.div
           initial={{ scale: 0.95, opacity: 0 }}
