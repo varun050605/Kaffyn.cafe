@@ -126,10 +126,16 @@ export const Footer = () => {
         </div>
 
         {/* Bottom */}
-        <div className="mt-16 pt-8 border-t border-primary-foreground/10 text-center">
+        <div className="mt-16 pt-8 border-t border-primary-foreground/10 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm text-primary-foreground/50">
             © {new Date().getFullYear()} KAFFYN. All rights reserved.
           </p>
+          <Link 
+            to="/admin/login" 
+            className="text-xs text-primary-foreground/30 hover:text-primary-foreground/50 transition-colors"
+          >
+            Staff Login
+          </Link>
         </div>
       </div>
     </footer>
