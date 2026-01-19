@@ -103,30 +103,30 @@ export const Navbar = () => {
           </button>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Navigation Overlay */}
         <AnimatePresence>
           {isOpen && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="md:hidden overflow-hidden"
+              className="md:hidden fixed inset-0 top-0 left-0 right-0 bottom-0 z-40 bg-cream/98 backdrop-blur-lg"
             >
-              <div className="pt-6 pb-4 flex flex-col gap-4">
+              <div className="flex flex-col items-center justify-center h-full gap-6 px-6">
                 {navLinks.map((link, index) => (
                   <motion.div
                     key={link.path}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.08 }}
                   >
                     <Link
                       to={link.path}
-                      className={`block py-2 text-lg font-medium ${
+                      className={`block py-3 text-2xl font-medium tracking-wide transition-colors ${
                         location.pathname === link.path
                           ? "text-primary"
-                          : "text-muted-foreground"
+                          : "text-muted-foreground hover:text-primary"
                       }`}
                     >
                       {link.name}
@@ -134,12 +134,13 @@ export const Navbar = () => {
                   </motion.div>
                 ))}
                 <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: navLinks.length * 0.1 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: navLinks.length * 0.08 }}
+                  className="pt-4"
                 >
-                  <Link to="/reservations" className="block pt-2">
-                    <Button variant="hero" size="lg" className="w-full">
+                  <Link to="/reservations">
+                    <Button variant="hero" size="xl" className="px-10">
                       Book a Table
                     </Button>
                   </Link>
