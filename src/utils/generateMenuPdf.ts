@@ -1,4 +1,5 @@
 import jsPDF from "jspdf";
+import kaffynLogo from "@/assets/kaffyn-logo.png";
 
 const menuData = {
   hotCoffee: {
@@ -107,7 +108,7 @@ const menuData = {
   },
 };
 
-export const generateMenuPdf = () => {
+export const generateMenuPdf = async () => {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
@@ -126,20 +127,37 @@ export const generateMenuPdf = () => {
   doc.setFillColor(...lightBg);
   doc.rect(0, 0, pageWidth, pageHeight, "F");
 
-  // Header
+  // Header with logo
   doc.setFillColor(...primaryColor);
-  doc.rect(0, 0, pageWidth, 45, "F");
+  doc.rect(0, 0, pageWidth, 50, "F");
 
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(28);
-  doc.setFont("helvetica", "bold");
-  doc.text("CAFÉ MENU", pageWidth / 2, 25, { align: "center" });
+  // Load and add logo
+  try {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = reject;
+      img.src = kaffynLogo;
+    });
+    
+    // Add white background circle for logo
+    doc.setFillColor(255, 255, 255);
+    doc.circle(pageWidth / 2, 25, 18, "F");
+    
+    // Add logo centered in header
+    const logoWidth = 32;
+    const logoHeight = 32;
+    doc.addImage(img, "PNG", (pageWidth - logoWidth) / 2, 9, logoWidth, logoHeight);
+  } catch (error) {
+    // Fallback to text if logo fails
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(28);
+    doc.setFont("helvetica", "bold");
+    doc.text("KAFFYN", pageWidth / 2, 30, { align: "center" });
+  }
 
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("Handcrafted with love", pageWidth / 2, 35, { align: "center" });
-
-  y = 55;
+  y = 60;
 
   const categories = Object.values(menuData);
 
@@ -151,7 +169,7 @@ export const generateMenuPdf = () => {
       if (currentColumn === 0) {
         currentColumn = 1;
         columnX = margin * 2 + columnWidth;
-        y = 55;
+        y = 60;
       } else {
         doc.addPage();
         doc.setFillColor(...lightBg);
