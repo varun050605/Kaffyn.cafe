@@ -253,7 +253,7 @@ export const generateMenuPdf = async () => {
   });
 
   // Footer
-  const footerStartY = pageHeight - 32;
+  const footerStartY = pageHeight - 38;
   
   doc.setDrawColor(...warmGold);
   doc.setLineWidth(0.3);
