@@ -202,23 +202,23 @@ const Admin = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="bg-white rounded-xl p-4 shadow-soft">
                 <p className="text-sm text-muted-foreground">Total</p>
-                <p className="text-2xl font-serif text-primary">{reservations.length}</p>
+                <p className="text-2xl font-sans font-semibold text-primary">{reservations.length}</p>
               </div>
               <div className="bg-white rounded-xl p-4 shadow-soft">
                 <p className="text-sm text-muted-foreground">Pending</p>
-                <p className="text-2xl font-serif text-primary">
+                <p className="text-2xl font-sans font-semibold text-primary">
                   {reservations.filter((r) => r.status === "pending").length}
                 </p>
               </div>
               <div className="bg-white rounded-xl p-4 shadow-soft">
                 <p className="text-sm text-muted-foreground">Confirmed</p>
-                <p className="text-2xl font-serif text-primary">
+                <p className="text-2xl font-sans font-semibold text-primary">
                   {reservations.filter((r) => r.status === "confirmed").length}
                 </p>
               </div>
               <div className="bg-white rounded-xl p-4 shadow-soft">
                 <p className="text-sm text-muted-foreground">Completed</p>
-                <p className="text-2xl font-serif text-primary">
+                <p className="text-2xl font-sans font-semibold text-primary">
                   {reservations.filter((r) => r.status === "completed").length}
                 </p>
               </div>
