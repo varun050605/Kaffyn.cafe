@@ -165,7 +165,7 @@ export const generateMenuPdf = async () => {
   doc.text("Menu", pageWidth / 2, y, { align: "center" });
   
   // Decorative line under menu title
-  y += 6;
+  y += 3;
   doc.setDrawColor(...warmGold);
   doc.setLineWidth(0.3);
   const lineWidth = 40;
