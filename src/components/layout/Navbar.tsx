@@ -87,7 +87,7 @@ export const Navbar = () => {
               </Link>
             ))}
             <Link to="/reservations">
-              <Button variant="hero" size="sm" className="text-sm">
+              <Button variant="hero" size="lg">
                 Book a Table
               </Button>
             </Link>
