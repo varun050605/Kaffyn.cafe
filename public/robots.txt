@@ -1,3 +1,6 @@
+# KAFFYN Robots.txt
+# https://kaffyn.cafe
+
 User-agent: Googlebot
 Allow: /
 
@@ -12,3 +15,8 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /admin/login
+
+# Sitemap
+Sitemap: https://kaffyn.cafe/sitemap.xml

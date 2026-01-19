@@ -33,7 +33,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Calendar, Clock, Users, Mail, Phone, Loader2, LogOut, Trash2, RefreshCw } from "lucide-react";
+import { Calendar, Clock, Users, Mail, Phone, Loader2, LogOut, Trash2, RefreshCw, Download } from "lucide-react";
 import { format } from "date-fns";
 
 interface Reservation {
@@ -140,6 +140,46 @@ const Admin = () => {
     navigate("/admin/login");
   };
 
+  const exportToCSV = () => {
+    if (reservations.length === 0) {
+      toast({
+        title: "No Data",
+        description: "There are no reservations to export.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const headers = ["Name", "Email", "Phone", "Date", "Time", "Guests", "Status", "Special Requests", "Created At"];
+    const csvData = reservations.map((r) => [
+      r.name,
+      r.email,
+      r.phone,
+      r.reservation_date,
+      r.reservation_time,
+      r.guests.toString(),
+      r.status,
+      r.special_requests || "",
+      format(new Date(r.created_at), "yyyy-MM-dd HH:mm"),
+    ]);
+
+    const csvContent = [
+      headers.join(","),
+      ...csvData.map((row) => row.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(",")),
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `kaffyn-reservations-${format(new Date(), "yyyy-MM-dd")}.csv`;
+    link.click();
+
+    toast({
+      title: "Exported",
+      description: `${reservations.length} reservations exported to CSV.`,
+    });
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "confirmed":
@@ -182,7 +222,11 @@ const Admin = () => {
                   Reservations
                 </p>
               </div>
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-3">
+                <Button variant="outline" size="sm" onClick={exportToCSV}>
+                  <Download className="w-4 h-4 mr-2" />
+                  Export CSV
+                </Button>
                 <Button variant="outline" size="sm" onClick={fetchReservations}>
                   <RefreshCw className="w-4 h-4 mr-2" />
                   Refresh
