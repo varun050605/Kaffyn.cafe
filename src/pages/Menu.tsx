@@ -4,6 +4,17 @@ import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { generateMenuPdf } from "@/utils/generateMenuPdf";
 import signatureDrink from "@/assets/signature-drink.jpg";
+import craftLatte from "@/assets/craft-latte.jpg";
+import craftCoffee from "@/assets/craft-coffee.jpg";
+import craftColdbrew from "@/assets/craft-coldbrew.jpg";
+import craftSpecials from "@/assets/craft-specials.jpg";
+
+const menuImages = [
+  { src: craftLatte, alt: "Signature latte art" },
+  { src: craftCoffee, alt: "Freshly brewed coffee" },
+  { src: craftColdbrew, alt: "Cold brew coffee" },
+  { src: craftSpecials, alt: "Seasonal specials" },
+];
 
 const Menu = () => {
   return (
@@ -60,6 +71,46 @@ const Menu = () => {
                 <div className="absolute -top-4 -right-4 w-24 h-24 bg-gold/20 rounded-full blur-2xl" />
                 <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-gold/10 rounded-full blur-3xl" />
               </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* Menu Images Gallery */}
+        <section className="py-20 bg-background">
+          <div className="container-wide px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="text-center mb-12"
+            >
+              <span className="text-sm tracking-[0.2em] uppercase text-gold font-medium">
+                A Taste of Kaffyn
+              </span>
+              <h2 className="font-serif text-3xl md:text-4xl text-primary mt-4">
+                Our Creations
+              </h2>
+            </motion.div>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {menuImages.map((image, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className="relative aspect-square rounded-xl overflow-hidden group"
+                >
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </motion.div>
+              ))}
             </div>
           </div>
         </section>
