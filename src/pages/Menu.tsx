@@ -62,7 +62,7 @@ const Menu = () => {
         </section>
 
         {/* Menu Categories Grid */}
-        <section className="section-padding">
+        <section className="section-padding pb-12">
           <div className="container-wide">
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {menuCategories.map((category, index) => (
@@ -71,7 +71,6 @@ const Menu = () => {
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="flex flex-col"
                 >
                   {/* Category Card */}
                   <div
@@ -122,27 +121,45 @@ const Menu = () => {
                       </div>
                     </div>
                   </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-                  {/* Menu Images - Only for available categories with menu images */}
-                  {category.available && category.menuImages && (
-                    <div className="mt-6 space-y-4">
-                      {category.menuImages.map((menuImg, imgIndex) => (
-                        <motion.div
-                          key={imgIndex}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.5, delay: 0.3 + imgIndex * 0.1 }}
-                          className="rounded-xl overflow-hidden shadow-soft border border-gold/20"
-                        >
-                          <img
-                            src={menuImg}
-                            alt={`${category.title} menu page ${imgIndex + 1}`}
-                            className="w-full h-auto"
-                          />
-                        </motion.div>
-                      ))}
-                    </div>
-                  )}
+        {/* Coffee & Beverages Menu Section */}
+        <section className="section-padding bg-cream">
+          <div className="container-wide">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-12"
+            >
+              <span className="text-sm tracking-[0.2em] uppercase text-gold font-medium">
+                Explore Our Offerings
+              </span>
+              <h2 className="font-serif text-3xl md:text-4xl text-primary mt-4">
+                Coffee & Beverages
+              </h2>
+            </motion.div>
+
+            <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+              {[coffeeMenu1, coffeeMenu2].map((menuImg, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="rounded-xl overflow-hidden shadow-medium border border-gold/20 bg-white"
+                >
+                  <img
+                    src={menuImg}
+                    alt={`Coffee & Beverages menu page ${index + 1}`}
+                    className="w-full h-auto"
+                  />
                 </motion.div>
               ))}
             </div>
