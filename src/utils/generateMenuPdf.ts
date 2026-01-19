@@ -253,14 +253,27 @@ export const generateMenuPdf = async () => {
   });
 
   // Footer
+  const footerStartY = pageHeight - 32;
+  
   doc.setDrawColor(...warmGold);
   doc.setLineWidth(0.3);
-  doc.line(margin, pageHeight - 18, pageWidth - margin, pageHeight - 18);
+  doc.line(margin, footerStartY, pageWidth - margin, footerStartY);
+  
+  // Contact info
+  doc.setTextColor(...darkBrown);
+  doc.setFontSize(7);
+  doc.setFont("helvetica", "bold");
+  doc.text("KAFFYN CAFE", pageWidth / 2, footerStartY + 6, { align: "center" });
   
   doc.setTextColor(...softBrown);
-  doc.setFontSize(7);
+  doc.setFontSize(6);
+  doc.setFont("helvetica", "normal");
+  doc.text("204, Orbit 2, Vesu Canal Rd, Bharthana, Surat, Gujarat 395007", pageWidth / 2, footerStartY + 11, { align: "center" });
+  doc.text("+91 95584 74855  |  hello@kaffyn.com  |  @kaffyn.cafe", pageWidth / 2, footerStartY + 16, { align: "center" });
+  
+  doc.setFontSize(5);
   doc.setFont("helvetica", "italic");
-  doc.text("Prices are subject to change  •  All prices inclusive of taxes", pageWidth / 2, pageHeight - 12, { align: "center" });
+  doc.text("Prices are subject to change  •  All prices inclusive of taxes", pageWidth / 2, footerStartY + 22, { align: "center" });
 
   // Save
   doc.save("Kaffyn_Menu.pdf");
