@@ -1,22 +1,33 @@
 import { motion } from "framer-motion";
 import { Layout } from "@/components/layout/Layout";
-import { Download } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { generateMenuPdf } from "@/utils/generateMenuPdf";
+import { ExternalLink } from "lucide-react";
 import signatureDrink from "@/assets/signature-drink.jpg";
-import craftLatte from "@/assets/craft-latte.jpg";
-import craftCoffee from "@/assets/craft-coffee.jpg";
-import craftColdbrew from "@/assets/craft-coldbrew.jpg";
-import craftSpecials from "@/assets/craft-specials.jpg";
+import pastry from "@/assets/pastry.jpg";
 
-const beverageImages = [
-  { src: craftLatte, alt: "Latte art" },
-  { src: craftCoffee, alt: "Fresh brewed coffee" },
-  { src: craftColdbrew, alt: "Cold brew coffee" },
-  { src: craftSpecials, alt: "Specialty drinks" },
+const menuCategories = [
+  {
+    title: "Coffee & Beverages",
+    description: "Handcrafted coffees, signature lattes, and refreshing drinks",
+    image: signatureDrink,
+    pdfLink: "/menus/Kaffyn_Menu.pdf",
+    available: true,
+  },
+  {
+    title: "Food Menu",
+    description: "Fresh breakfast, pastries, and artisan bites",
+    image: pastry,
+    pdfLink: null,
+    available: false,
+  },
 ];
 
 const Menu = () => {
+  const handleMenuClick = (pdfLink: string | null, available: boolean) => {
+    if (available && pdfLink) {
+      window.open(pdfLink, "_blank");
+    }
+  };
+
   return (
     <Layout>
       <motion.div
@@ -27,72 +38,81 @@ const Menu = () => {
         {/* Hero */}
         <section className="pt-32 pb-16 bg-cream">
           <div className="container-wide px-4 sm:px-6 lg:px-8">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="text-center lg:text-left"
-              >
-                <span className="text-sm tracking-[0.2em] uppercase text-gold font-medium">
-                  Curated with Care
-                </span>
-                <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl text-primary mt-4 mb-6">
-                  Our Menu
-                </h1>
-                <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto lg:mx-0">
-                  Handcrafted beverages and artisan treats made with love. Download our complete menu to explore all our offerings.
-                </p>
-                <Button
-                  onClick={generateMenuPdf}
-                  size="lg"
-                  className="bg-gold hover:bg-gold/90 text-primary font-medium"
-                >
-                  <Download className="w-5 h-5 mr-2" />
-                  Download Menu PDF
-                </Button>
-              </motion.div>
-              
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="relative hidden lg:block"
-              >
-                <div className="relative rounded-2xl overflow-hidden shadow-medium">
-                  <img
-                    src={signatureDrink}
-                    alt="Signature coffee drink"
-                    className="w-full h-[500px] object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/30 via-transparent to-transparent" />
-                </div>
-                {/* Decorative elements */}
-                <div className="absolute -top-4 -right-4 w-24 h-24 bg-gold/20 rounded-full blur-2xl" />
-                <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-gold/10 rounded-full blur-3xl" />
-              </motion.div>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-center max-w-3xl mx-auto"
+            >
+              <span className="text-sm tracking-[0.2em] uppercase text-gold font-medium">
+                Curated with Care
+              </span>
+              <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl text-primary mt-4 mb-6">
+                Our Menu
+              </h1>
+              <p className="text-lg text-muted-foreground">
+                Click on a menu category to view the full menu in PDF format.
+              </p>
+            </motion.div>
           </div>
         </section>
 
-        {/* Beverage Images Grid */}
-        <section className="py-16 bg-cream">
-          <div className="container-wide px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {beverageImages.map((image, index) => (
+        {/* Menu Categories Grid */}
+        <section className="section-padding">
+          <div className="container-wide">
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {menuCategories.map((category, index) => (
                 <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
+                  key={category.title}
+                  initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.1 * index }}
-                  className="relative rounded-xl overflow-hidden aspect-square shadow-soft group"
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  onClick={() => handleMenuClick(category.pdfLink, category.available)}
+                  className={`group relative overflow-hidden rounded-2xl shadow-soft hover:shadow-medium transition-all duration-500 ${
+                    category.available 
+                      ? "cursor-pointer" 
+                      : "cursor-not-allowed opacity-75"
+                  }`}
                 >
-                  <img
-                    src={image.src}
-                    alt={image.alt}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  {/* Image */}
+                  <div className="relative h-72 md:h-80 overflow-hidden">
+                    <motion.img
+                      src={category.image}
+                      alt={category.title}
+                      className="w-full h-full object-cover"
+                      whileHover={category.available ? { scale: 1.08 } : {}}
+                      transition={{ duration: 0.5 }}
+                    />
+                    {/* Overlay */}
+                    <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent transition-opacity duration-300 ${
+                      category.available ? "group-hover:from-black/90" : ""
+                    }`} />
+                    
+                    {/* Content */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
+                      <h2 className="font-serif text-2xl md:text-3xl text-white mb-3">
+                        {category.title}
+                      </h2>
+                      <p className="text-white/80 text-sm md:text-base max-w-xs">
+                        {category.description}
+                      </p>
+                      
+                      {category.available ? (
+                        <motion.div
+                          className="mt-6 flex items-center gap-2 px-6 py-3 bg-gold text-primary rounded-full font-medium text-sm"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <span>View Menu</span>
+                          <ExternalLink className="w-4 h-4" />
+                        </motion.div>
+                      ) : (
+                        <div className="mt-6 px-6 py-3 bg-white/20 text-white/80 rounded-full font-medium text-sm">
+                          Coming Soon
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </motion.div>
               ))}
             </div>
