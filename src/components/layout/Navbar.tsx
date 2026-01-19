@@ -96,60 +96,61 @@ export const Navbar = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden relative z-10 p-2 text-primary"
+            className="md:hidden relative z-[60] p-2 text-primary"
             aria-label="Toggle menu"
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
+      </nav>
 
-        {/* Mobile Navigation Overlay */}
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="md:hidden fixed inset-0 top-0 left-0 right-0 bottom-0 z-40 bg-cream/98 backdrop-blur-lg"
-            >
-              <div className="flex flex-col items-center justify-center h-full gap-6 px-6">
-                {navLinks.map((link, index) => (
-                  <motion.div
-                    key={link.path}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.08 }}
-                  >
-                    <Link
-                      to={link.path}
-                      className={`block py-3 text-2xl font-medium tracking-wide transition-colors ${
-                        location.pathname === link.path
-                          ? "text-primary"
-                          : "text-muted-foreground hover:text-primary"
-                      }`}
-                    >
-                      {link.name}
-                    </Link>
-                  </motion.div>
-                ))}
+      {/* Mobile Navigation Overlay - Outside nav for full screen coverage */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="md:hidden fixed inset-0 z-[55]"
+            style={{ backgroundColor: 'hsl(35 30% 95%)' }}
+          >
+            <div className="flex flex-col items-center justify-center h-full gap-6 px-6">
+              {navLinks.map((link, index) => (
                 <motion.div
+                  key={link.path}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: navLinks.length * 0.08 }}
-                  className="pt-4"
+                  transition={{ delay: index * 0.08 }}
                 >
-                  <Link to="/reservations">
-                    <Button variant="hero" size="xl" className="px-10">
-                      Book a Table
-                    </Button>
+                  <Link
+                    to={link.path}
+                    className={`block py-3 text-2xl font-medium tracking-wide transition-colors ${
+                      location.pathname === link.path
+                        ? "text-primary"
+                        : "text-muted-foreground hover:text-primary"
+                    }`}
+                  >
+                    {link.name}
                   </Link>
                 </motion.div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </nav>
+              ))}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: navLinks.length * 0.08 }}
+                className="pt-4"
+              >
+                <Link to="/reservations">
+                  <Button variant="hero" size="xl" className="px-10">
+                    Book a Table
+                  </Button>
+                </Link>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.header>
   );
 };
