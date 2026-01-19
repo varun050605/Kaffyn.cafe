@@ -107,7 +107,7 @@ const AdminLogin = () => {
               <div className="w-16 h-16 rounded-full bg-gold/20 flex items-center justify-center mx-auto mb-4">
                 <Lock className="w-8 h-8 text-gold" />
               </div>
-              <h1 className="font-serif text-3xl text-primary mb-2">Admin Login</h1>
+              <h1 className="font-sans text-3xl font-semibold text-primary mb-2">Admin Login</h1>
               <p className="text-muted-foreground text-sm">
                 Sign in to manage reservations
               </p>
