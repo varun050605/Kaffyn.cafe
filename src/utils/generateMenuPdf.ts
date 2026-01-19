@@ -157,20 +157,21 @@ export const generateMenuPdf = async () => {
     y += 25;
   }
 
-  // Decorative line under logo
-  doc.setDrawColor(...warmGold);
-  doc.setLineWidth(0.3);
-  const lineWidth = 40;
-  doc.line((pageWidth - lineWidth) / 2, y, (pageWidth + lineWidth) / 2, y);
-  
-  // Menu title
-  y += 8;
+  // Menu title (above the line)
+  y += 5;
   doc.setTextColor(...darkBrown);
   doc.setFontSize(14);
   doc.setFont("times", "italic");
   doc.text("Menu", pageWidth / 2, y, { align: "center" });
   
-  y += 12;
+  // Decorative line under menu title
+  y += 6;
+  doc.setDrawColor(...warmGold);
+  doc.setLineWidth(0.3);
+  const lineWidth = 40;
+  doc.line((pageWidth - lineWidth) / 2, y, (pageWidth + lineWidth) / 2, y);
+  
+  y += 10;
 
   const categories = Object.values(menuData);
   const columnWidth = (contentWidth - 10) / 2;
