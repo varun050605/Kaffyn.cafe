@@ -4,13 +4,15 @@ import { Layout } from "@/components/layout/Layout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar, Clock, Users, Check } from "lucide-react";
+import { Calendar, Clock, Users, Check, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import cafeInterior from "@/assets/cafe-interior.jpg";
 
 const Reservations = () => {
   const { toast } = useToast();
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -21,13 +23,38 @@ const Reservations = () => {
     requests: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitted(true);
-    toast({
-      title: "Reservation Confirmed!",
-      description: "We'll send you a confirmation email shortly.",
-    });
+    setIsLoading(true);
+
+    try {
+      const { error } = await supabase.from("reservations").insert({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        reservation_date: formData.date,
+        reservation_time: formData.time,
+        guests: parseInt(formData.guests),
+        special_requests: formData.requests || null,
+      });
+
+      if (error) throw error;
+
+      setIsSubmitted(true);
+      toast({
+        title: "Reservation Confirmed!",
+        description: "We'll send you a confirmation email shortly.",
+      });
+    } catch (error) {
+      console.error("Reservation error:", error);
+      toast({
+        title: "Something went wrong",
+        description: "Please try again or contact us directly.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -210,8 +237,15 @@ const Reservations = () => {
                     />
                   </div>
 
-                  <Button type="submit" variant="hero" size="xl" className="w-full">
-                    Confirm Reservation
+                  <Button type="submit" variant="hero" size="xl" className="w-full" disabled={isLoading}>
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Submitting...
+                      </>
+                    ) : (
+                      "Confirm Reservation"
+                    )}
                   </Button>
                 </form>
               </motion.div>
