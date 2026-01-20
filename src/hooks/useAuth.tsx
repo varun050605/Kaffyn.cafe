@@ -39,6 +39,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        // Handle token refresh errors - clear stale session
+        if (event === 'TOKEN_REFRESHED' && !session) {
+          setSession(null);
+          setUser(null);
+          setIsAdmin(false);
+          setIsLoading(false);
+          return;
+        }
+
         setSession(session);
         setUser(session?.user ?? null);
 
@@ -57,7 +66,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     );
 
     // THEN check for existing session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session }, error }) => {
+      // If there's an error getting the session (e.g., invalid refresh token),
+      // clear any stale session data
+      if (error) {
+        console.error("Session error:", error);
+        setSession(null);
+        setUser(null);
+        setIsAdmin(false);
+        setIsLoading(false);
+        return;
+      }
+
       setSession(session);
       setUser(session?.user ?? null);
 
@@ -65,6 +85,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const adminStatus = await checkAdminRole(session.user.id);
         setIsAdmin(adminStatus);
       }
+      setIsLoading(false);
+    }).catch((err) => {
+      // Handle any unexpected errors
+      console.error("Unexpected auth error:", err);
+      setSession(null);
+      setUser(null);
+      setIsAdmin(false);
       setIsLoading(false);
     });
 
