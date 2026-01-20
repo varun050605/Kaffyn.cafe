@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Layout } from "@/components/layout/Layout";
+import { AdminLayout } from "@/components/layout/AdminLayout";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -195,16 +195,16 @@ const Admin = () => {
 
   if (authLoading || isLoading) {
     return (
-      <Layout>
+      <AdminLayout>
         <div className="min-h-screen flex items-center justify-center bg-cream pt-20">
           <Loader2 className="w-8 h-8 animate-spin text-gold" />
         </div>
-      </Layout>
+      </AdminLayout>
     );
   }
 
   return (
-    <Layout>
+    <AdminLayout>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -392,7 +392,7 @@ const Admin = () => {
           </div>
         </section>
       </motion.div>
-    </Layout>
+    </AdminLayout>
   );
 };
 
