@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Layout } from "@/components/layout/Layout";
+import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Lock, Eye, EyeOff } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Loader2, Lock, Eye, EyeOff, Mail, ArrowLeft, CheckCircle } from "lucide-react";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -14,6 +15,8 @@ const AdminLogin = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmailSent, setResetEmailSent] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [formData, setFormData] = useState({
     email: "",
@@ -36,11 +39,13 @@ const AdminLogin = () => {
       newErrors.email = "Please enter a valid email address";
     }
 
-    // Password validation
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+    // Password validation (only for login, not forgot password)
+    if (!showForgotPassword) {
+      if (!formData.password) {
+        newErrors.password = "Password is required";
+      } else if (formData.password.length < 6) {
+        newErrors.password = "Password must be at least 6 characters";
+      }
     }
 
     setErrors(newErrors);
@@ -74,6 +79,39 @@ const AdminLogin = () => {
     }, 500);
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formData.email.trim()) {
+      setErrors({ email: "Email is required" });
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setErrors({ email: "Please enter a valid email address" });
+      return;
+    }
+
+    setIsLoading(true);
+
+    const { error } = await supabase.auth.resetPasswordForEmail(formData.email, {
+      redirectTo: `${window.location.origin}/admin/reset-password`,
+    });
+
+    if (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    setResetEmailSent(true);
+    setIsLoading(false);
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -89,8 +127,126 @@ const AdminLogin = () => {
     }
   };
 
+  // Reset email sent confirmation
+  if (resetEmailSent) {
+    return (
+      <AdminLayout>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="min-h-screen flex items-center justify-center bg-cream pt-32 pb-20"
+        >
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", damping: 20 }}
+            className="w-full max-w-md mx-4"
+          >
+            <div className="bg-white rounded-2xl shadow-medium p-8 text-center">
+              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-8 h-8 text-green-500" />
+              </div>
+              <h1 className="font-sans text-2xl font-semibold text-primary mb-2">Check Your Email</h1>
+              <p className="text-muted-foreground text-sm mb-6">
+                We've sent a password reset link to <strong>{formData.email}</strong>. 
+                Click the link in the email to reset your password.
+              </p>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowForgotPassword(false);
+                  setResetEmailSent(false);
+                }}
+                className="w-full"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Login
+              </Button>
+            </div>
+          </motion.div>
+        </motion.div>
+      </AdminLayout>
+    );
+  }
+
+  // Forgot password form
+  if (showForgotPassword) {
+    return (
+      <AdminLayout>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="min-h-screen flex items-center justify-center bg-cream pt-32 pb-20"
+        >
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", damping: 20 }}
+            className="w-full max-w-md mx-4"
+          >
+            <div className="bg-white rounded-2xl shadow-medium p-8">
+              <div className="text-center mb-8">
+                <div className="w-16 h-16 rounded-full bg-gold/20 flex items-center justify-center mx-auto mb-4">
+                  <Mail className="w-8 h-8 text-gold" />
+                </div>
+                <h1 className="font-sans text-3xl font-semibold text-primary mb-2">Forgot Password</h1>
+                <p className="text-muted-foreground text-sm">
+                  Enter your email and we'll send you a reset link
+                </p>
+              </div>
+
+              <form onSubmit={handleForgotPassword} className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-primary">Email</label>
+                  <Input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="admin@kaffyn.com"
+                    className={`h-12 ${errors.email ? "border-destructive" : ""}`}
+                  />
+                  {errors.email && (
+                    <p className="text-sm text-destructive">{errors.email}</p>
+                  )}
+                </div>
+
+                <Button
+                  type="submit"
+                  variant="hero"
+                  size="xl"
+                  className="w-full"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    "Send Reset Link"
+                  )}
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="w-full"
+                  onClick={() => setShowForgotPassword(false)}
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to Login
+                </Button>
+              </form>
+            </div>
+          </motion.div>
+        </motion.div>
+      </AdminLayout>
+    );
+  }
+
   return (
-    <Layout>
+    <AdminLayout>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -157,6 +313,16 @@ const AdminLogin = () => {
                 )}
               </div>
 
+              <div className="text-right">
+                <button
+                  type="button"
+                  onClick={() => setShowForgotPassword(true)}
+                  className="text-sm text-gold hover:text-gold/80 transition-colors"
+                >
+                  Forgot password?
+                </button>
+              </div>
+
               <Button
                 type="submit"
                 variant="hero"
@@ -177,7 +343,7 @@ const AdminLogin = () => {
           </div>
         </motion.div>
       </motion.div>
-    </Layout>
+    </AdminLayout>
   );
 };
 
