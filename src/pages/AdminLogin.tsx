@@ -11,7 +11,7 @@ import { Loader2, Lock, Eye, EyeOff, Mail, ArrowLeft, CheckCircle } from "lucide
 
 const AdminLogin = () => {
   const navigate = useNavigate();
-  const { signIn, isLoading: authLoading, user, isAdmin } = useAuth();
+  const { signIn, signOut, isLoading: authLoading, user, isAdmin } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -23,10 +23,71 @@ const AdminLogin = () => {
     password: "",
   });
 
-  // Redirect if already logged in as admin
+  const handleSignOut = async () => {
+    setIsLoading(true);
+    await signOut();
+    setIsLoading(false);
+    toast({
+      title: "Signed Out",
+      description: "You have been signed out successfully.",
+    });
+  };
+
+  // Show options if already logged in as admin instead of auto-redirecting
   if (user && isAdmin && !authLoading) {
-    navigate("/admin");
-    return null;
+    return (
+      <AdminLayout>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="min-h-screen flex items-center justify-center bg-cream pt-32 pb-20"
+        >
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", damping: 20 }}
+            className="w-full max-w-md mx-4"
+          >
+            <div className="bg-white rounded-2xl shadow-medium p-8 text-center">
+              <div className="w-16 h-16 rounded-full bg-gold/20 flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-8 h-8 text-gold" />
+              </div>
+              <h1 className="font-sans text-2xl font-semibold text-primary mb-2">
+                Already Signed In
+              </h1>
+              <p className="text-muted-foreground text-sm mb-6">
+                You are currently logged in as an admin.
+              </p>
+              <div className="space-y-3">
+                <Button
+                  variant="hero"
+                  size="xl"
+                  className="w-full"
+                  onClick={() => navigate("/admin")}
+                >
+                  Go to Dashboard
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleSignOut}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Signing out...
+                    </>
+                  ) : (
+                    "Sign Out"
+                  )}
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      </AdminLayout>
+    );
   }
 
   const validateForm = () => {
