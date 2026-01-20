@@ -25,9 +25,6 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
                 alt="Kaffyn"
                 className="h-16 w-auto drop-shadow-md contrast-125"
               />
-              <span className="text-sm font-medium text-gold tracking-wide hidden sm:inline">
-                Admin Panel
-              </span>
             </Link>
             <Link 
               to="/" 
